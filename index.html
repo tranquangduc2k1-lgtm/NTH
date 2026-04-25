@@ -105,6 +105,39 @@ function handleSearch() {
     document.getElementById("result").innerHTML = "";
   }
 }
+  <script>
+function handleSearch() {
+  const keyword = input.value.trim().toLowerCase();
+
+  if (!keyword) {
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("status").innerHTML = "";
+    return;
+  }
+
+  const found = data.find(item => item.code === keyword);
+
+  if (found) {
+    document.getElementById("status").innerHTML = "✅ Tìm thấy";
+
+    document.getElementById("result").innerHTML = `
+      <iframe 
+        src="https://docs.google.com/gview?url=${found.url}&embedded=true"
+        width="100%" 
+        height="600px">
+      </iframe>
+    `;
+
+  } else {
+    document.getElementById("status").innerHTML = "❌ Không tìm thấy";
+    document.getElementById("result").innerHTML = "";
+  }
+
+  // 🔥 QUAN TRỌNG: tự bôi đen để scan tiếp
+  input.focus();
+  input.select();
+}
+</script>
 </script>
 
 </body>
