@@ -16,29 +16,19 @@ fetch(sheetURL)
         url: cols[1]?.replace(/"/g, "").trim()
       };
     });
-
-    console.log("DATA LOADED:", data);
   });
 
 const input = document.getElementById("searchBox");
 
-// 🔥 FIX: delay để nhận đủ dữ liệu scan
-let scanTimeout;
-
-input.addEventListener("input", function() {
-  clearTimeout(scanTimeout);
-
-  scanTimeout = setTimeout(() => {
-    handleSearch();
-  }, 120); // đợi scan xong
+// 🔥 CHỈ dùng Enter (chuẩn cho scan)
+input.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault(); // tránh reload form
+    handleSearch(true); // true = scan
+  }
 });
 
-// CHỈ search khi Enter
-input.addEventListener("keypress", function(e) {
-  if (e.key === "Enter") handleSearch();
-});
-
-function handleSearch() {
+function handleSearch(isScan = false) {
   const keyword = input.value.trim().toLowerCase();
 
   if (!keyword) {
@@ -64,12 +54,14 @@ function handleSearch() {
     document.getElementById("result").innerHTML = "";
   }
 
-  // 🔥 tự bôi đen để scan tiếp
+  // 🔥 CHỈ auto select nếu là scan (Enter)
+  if (isScan) {
     input.focus();
     input.select();
+  }
 }
 
-// 🔥 focus sẵn khi mở trang
+// focus khi mở trang
 window.onload = () => {
   input.focus();
 };
