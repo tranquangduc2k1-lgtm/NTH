@@ -1,3 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Tìm mã PDF</title>
+
+<style>
+body {
+  font-family: Arial;
+  max-width: 900px;
+  margin: auto;
+  background: #f5f5f5;
+}
+
+h2 {
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+#status {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+iframe {
+  margin-top: 15px;
+  border: 1px solid #ccc;
+}
+</style>
+</head>
+
+<body>
+
+<h2>🔎 Tìm mã sản phẩm</h2>
+
+<input type="text" id="searchBox" placeholder="Quét hoặc nhập mã...">
+
+<div id="status"></div>
+<div id="result"></div>
+
 <script>
 let data = [];
 
@@ -66,3 +112,6 @@ window.onload = () => {
   input.focus();
 };
 </script>
+
+</body>
+</html>
