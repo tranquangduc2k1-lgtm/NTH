@@ -12,22 +12,38 @@ body {
   background: #f5f5f5;
 }
 
-h2 {
-  text-align: center;
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 
+.logo {
+  width: 60px;
+}
+
+h2 {
+  margin: 0;
+}
+
+/* INPUT */
 input {
   width: 100%;
   padding: 14px;
   font-size: 18px;
-  margin-top: 10px;
+  margin-top: 15px;
 }
 
+/* STATUS */
 #status {
   margin-top: 10px;
   font-weight: bold;
 }
 
+/* PDF */
 iframe {
   margin-top: 15px;
   border: 1px solid #ccc;
@@ -37,7 +53,11 @@ iframe {
 
 <body>
 
-<h2>🔎 Tìm mã sản phẩm</h2>
+<!-- 🔥 HEADER CÓ LOGO -->
+<div class="header">
+  <img src="logo.png" class="logo">
+  <h2>🔎 Tìm mã sản phẩm</h2>
+</div>
 
 <input type="text" id="searchBox" placeholder="Quét hoặc nhập mã...">
 
@@ -66,11 +86,11 @@ fetch(sheetURL)
 
 const input = document.getElementById("searchBox");
 
-// 🔥 CHỈ dùng Enter (chuẩn cho scan)
+// 🔥 CHỈ dùng Enter (scan + gõ tay)
 input.addEventListener("keydown", function(e) {
   if (e.key === "Enter") {
-    e.preventDefault(); // tránh reload form
-    handleSearch(true); // true = scan
+    e.preventDefault();
+    handleSearch(true);
   }
 });
 
@@ -100,7 +120,7 @@ function handleSearch(isScan = false) {
     document.getElementById("result").innerHTML = "";
   }
 
-  // 🔥 CHỈ auto select nếu là scan (Enter)
+  // 🔥 tự bôi đen để scan tiếp
   if (isScan) {
     input.focus();
     input.select();
