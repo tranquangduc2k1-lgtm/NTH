@@ -75,6 +75,7 @@ input.addEventListener("keypress", function(e) {
   if (e.key === "Enter") handleSearch();
 });
 
+<script>
 function handleSearch() {
   const keyword = input.value.trim().toLowerCase();
 
@@ -96,15 +97,16 @@ function handleSearch() {
         height="600px">
       </iframe>
     `;
-
   } else {
     document.getElementById("status").innerHTML = "❌ Không tìm thấy";
     document.getElementById("result").innerHTML = "";
   }
 
-  // 🔥 QUAN TRỌNG: tự bôi đen để scan tiếp
-  input.focus();
-  input.select();
+  // 🔥 FIX CHẮC CHẮN HOẠT ĐỘNG
+  setTimeout(() => {
+    input.focus();
+    input.select();
+  }, 100);
 }
 </script>
 </body>
