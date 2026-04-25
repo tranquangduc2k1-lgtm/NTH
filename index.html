@@ -106,41 +106,45 @@ fetch(sheetURL)
     });
   });
 
-// search realtime
-document.getElementById("searchBox").addEventListener("input", function() {
-  const keyword = this.value.toLowerCase();
+<script>
+let data = [];
 
-  const filtered = data.filter(item =>
-    item.code && item.code.toLowerCase().includes(keyword)
-  );
+const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT-ihe2BoE3uU_trCfMHs-4vdTx9UnW_bnHz80vi4__AA_p-xW98E1oBDcOlan7XDFFn0w0WwSsaRhJ/pub?output=csv";
 
-  let html = "";
+// load data
+fetch(sheetURL)
+  .then(res => res.text())
+  .then(csv => {
+    const rows = csv.split("\n").slice(1);
 
-  filtered.forEach(item => {
-    html += `
-      <div class="result" onclick="openPDF('${item.url}')">
-        📄 ${item.code}
-      </div>
-    `;
+    data = rows.map(row => {
+      const cols = row.split(",");
+      return {
+        code: cols[0]?.replace(/"/g, "").trim().toLowerCase(),
+        url: cols[1]?.replace(/"/g, "").trim()
+      };
+    });
   });
 
-  document.getElementById("results").innerHTML = html || "❌ Không tìm thấy";
+// 🔍 SEARCH REALTIME (kiểu scan)
+document.getElementById("searchBox").addEventListener("input", function() {
+  const keyword = this.value.trim().toLowerCase();
+
+  const found = data.find(item => item.code === keyword);
+
+  if (found) {
+    document.getElementById("results").innerHTML = `
+      <div style="margin-top:20px">
+        <b>${found.code.toUpperCase()}</b><br>
+        <iframe 
+          src="https://docs.google.com/gview?url=${found.url}&embedded=true"
+          width="100%" 
+          height="600px">
+        </iframe>
+      </div>
+    `;
+  } else {
+    document.getElementById("results").innerHTML = "";
+  }
 });
-
-// mở modal
-function openPDF(url) {
-  document.getElementById("pdfModal").style.display = "block";
-
-  document.getElementById("pdfFrame").src =
-    "https://docs.google.com/gview?url=" + url + "&embedded=true";
-}
-
-// đóng modal
-function closeModal() {
-  document.getElementById("pdfModal").style.display = "none";
-  document.getElementById("pdfFrame").src = "";
-}
 </script>
-
-</body>
-</html>
