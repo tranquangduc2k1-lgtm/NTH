@@ -33,7 +33,7 @@ input.addEventListener("input", function() {
   }, 120); // đợi scan xong
 });
 
-// 🔥 vẫn hỗ trợ Enter
+// CHỈ search khi Enter
 input.addEventListener("keypress", function(e) {
   if (e.key === "Enter") handleSearch();
 });
@@ -65,10 +65,8 @@ function handleSearch() {
   }
 
   // 🔥 tự bôi đen để scan tiếp
-  setTimeout(() => {
     input.focus();
     input.select();
-  }, 100);
 }
 
 // 🔥 focus sẵn khi mở trang
