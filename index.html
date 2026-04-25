@@ -101,12 +101,8 @@ function handleSearch() {
     document.getElementById("status").innerHTML = "❌ Không tìm thấy";
     document.getElementById("result").innerHTML = "";
   }
-
-  // 🔥 FIX CHẮC CHẮN HOẠT ĐỘNG
-  setTimeout(() => {
-    input.focus();
-    input.select();
-  }, 100);
+input.focus();
+input.select();
 }
 </script>
 </body>
