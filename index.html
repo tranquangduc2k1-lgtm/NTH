@@ -94,7 +94,15 @@ input.addEventListener("keydown", function(e) {
     handleSearch(true);
   }
 });
-
+function convertDriveLink(url) {
+  if (url.includes("drive.google.com")) {
+    const match = url.match(/\/d\/(.*?)\//);
+    if (match && match[1]) {
+      return `https://drive.google.com/file/d/${match[1]}/preview`;
+    }
+  }
+  return "https://docs.google.com/gview?url=" + url + "&embedded=true";
+}
 function handleSearch(isScan = false) {
   const keyword = input.value.trim().toLowerCase();
 
@@ -110,12 +118,12 @@ function handleSearch(isScan = false) {
     document.getElementById("status").innerHTML = "✅ Tìm thấy";
 
     document.getElementById("result").innerHTML = `
-      <iframe 
-        src="https://docs.google.com/gview?url=${found.url}&embedded=true"
-        width="100%" 
-        height="600px">
-      </iframe>
-    `;
+  <iframe 
+    src="${convertDriveLink(found.url)}"
+    width="100%" 
+    height="600px">
+  </iframe>
+`;
   } else {
     document.getElementById("status").innerHTML = "❌ Không tìm thấy";
     document.getElementById("result").innerHTML = "";
