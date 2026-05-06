@@ -96,7 +96,20 @@ fetch("data.json")
         url: String(item.url).trim()
     }));
 
+    dataLoaded = true;
+
+    document.getElementById("status").innerHTML =
+        "✅ Đã tải dữ liệu";
+
     console.log("DATA LOADED:", data);
+
+})
+.catch(err => {
+
+    document.getElementById("status").innerHTML =
+        "❌ Lỗi tải data.json";
+
+    console.error(err);
 
 });
 
@@ -122,10 +135,18 @@ input.addEventListener("keydown", function(e){
 // SEARCH
 function handleSearch(isScan=false){
 
-    const keyword = String(input.value)
-.trim()
-.toLowerCase();
+    if(!dataLoaded){
 
+        document.getElementById("status").innerHTML =
+            "⏳ Đang tải dữ liệu...";
+
+        return;
+
+    }
+
+    const keyword = String(input.value)
+    .trim()
+    .toLowerCase();
     if(!keyword){
 
         return;
