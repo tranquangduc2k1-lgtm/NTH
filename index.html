@@ -91,10 +91,10 @@ fetch("data.json")
 .then(res => res.json())
 .then(json => {
 
-data = json.map(item => ({
-    code: String(item.code).trim().toLowerCase(),
-    url: String(item.url).trim()
-}));
+    data = json.map(item => ({
+        code: String(item.code).trim().toLowerCase(),
+        url: String(item.url).trim()
+    }));
 
     console.log("DATA LOADED:", data);
 
@@ -122,7 +122,9 @@ input.addEventListener("keydown", function(e){
 // SEARCH
 function handleSearch(isScan=false){
 
-    const keyword = input.value.trim().toLowerCase();
+    const keyword = String(input.value)
+.trim()
+.toLowerCase();
 
     if(!keyword){
 
