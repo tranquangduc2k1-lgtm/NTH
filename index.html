@@ -252,31 +252,39 @@ function handleSearch(isScan=false){
 }
 
 
-// LOAD PDF
-async function loadPDF(url){
+function loadPDF(url){
 
     const container =
         document.getElementById("pdf-container");
 
-    container.innerHTML =
-        "<div class='loading'>⏳ Đang tải PDF...</div>";
+    // ===== GOOGLE DRIVE =====
+    if(url.includes("drive.google.com")){
 
-    try{
+        const match = url.match(/\/d\/(.*?)\//);
 
-        pdfDoc =
-            await pdfjsLib.getDocument(url).promise;
+        if(match && match[1]){
 
-        renderPages();
+            const fileId = match[1];
 
-    }
-    catch(err){
+            url =
+                `https://drive.google.com/file/d/${fileId}/preview`;
 
-        container.innerHTML =
-            "❌ Không mở được PDF";
-
-        console.error(err);
+        }
 
     }
+
+    // ===== IFRAME PDF =====
+    container.innerHTML = `
+        <iframe
+            src="${url}"
+            width="100%"
+            height="700px"
+            style="
+                border:none;
+                background:white;
+            ">
+        </iframe>
+    `;
 
 }
 
