@@ -91,7 +91,10 @@ fetch("data.json")
 .then(res => res.json())
 .then(json => {
 
-    data = json;
+data = json.map(item => ({
+    code: String(item.code).trim().toLowerCase(),
+    url: String(item.url).trim()
+}));
 
     console.log("DATA LOADED:", data);
 
