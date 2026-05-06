@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
+
 <meta charset="UTF-8">
+
 <title>Tìm mã PDF</title>
+
+<meta http-equiv="Cache-Control" content="no-cache">
 
 <!-- PDF.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -14,6 +18,7 @@ body{
     max-width:1000px;
     margin:auto;
     background:#f5f5f5;
+    padding:20px;
 }
 
 h2{
@@ -25,6 +30,7 @@ input{
     padding:14px;
     font-size:18px;
     margin-top:10px;
+    box-sizing:border-box;
 }
 
 #status{
@@ -42,6 +48,14 @@ input{
 button{
     padding:8px 14px;
     cursor:pointer;
+    border:none;
+    background:#007bff;
+    color:white;
+    border-radius:5px;
+}
+
+button:hover{
+    opacity:0.9;
 }
 
 /* PDF */
@@ -56,14 +70,24 @@ canvas{
     background:white;
 }
 
+.loading{
+    color:#666;
+    margin-top:10px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <h2>🔎 Tìm mã sản phẩm</h2>
 
-<input type="text" id="searchBox" placeholder="Quét hoặc nhập mã...">
+<input 
+    type="text" 
+    id="searchBox" 
+    placeholder="Quét hoặc nhập mã..."
+>
 
 <div id="status"></div>
 
@@ -81,44 +105,81 @@ canvas{
 
 let data = [];
 
+let dataLoaded = false;
+
 let pdfDoc = null;
 
 let scale = 1.2;
 
 
 // LOAD JSON
-fetch("data.json")
-.then(res => res.json())
-.then(json => {
+async function loadData(){
 
-    data = json.map(item => ({
-        code: String(item.code).trim().toLowerCase(),
-        url: String(item.url).trim()
-    }));
+    try{
 
-    dataLoaded = true;
+        document.getElementById("status").innerHTML =
+            "⏳ Đang tải dữ liệu...";
 
-    document.getElementById("status").innerHTML =
-        "✅ Đã tải dữ liệu";
+        const res = await fetch(
+            "data.json?v=" + Date.now()
+        );
 
-    console.log("DATA LOADED:", data);
+        const json = await res.json();
 
-})
-.catch(err => {
+        data = json.map(item => ({
+            code: String(item.code)
+                .trim()
+                .toLowerCase(),
 
-    document.getElementById("status").innerHTML =
-        "❌ Lỗi tải data.json";
+            url: String(item.url)
+                .trim()
+        }));
 
-    console.error(err);
+        dataLoaded = true;
 
-});
+        document.getElementById("status").innerHTML =
+            "✅ Đã tải dữ liệu";
+
+        console.log("DATA LOADED:", data);
+
+    }
+    catch(err){
+
+        document.getElementById("status").innerHTML =
+            "❌ Lỗi tải data.json";
+
+        console.error(err);
+
+    }
+
+}
+
+
+// CONVERT GOOGLE DRIVE LINK
+function convertDriveLink(url){
+
+    if(url.includes("drive.google.com")){
+
+        const match = url.match(/\/d\/(.*?)\//);
+
+        if(match && match[1]){
+
+            return `https://drive.google.com/uc?export=download&id=${match[1]}`;
+
+        }
+
+    }
+
+    return url;
+
+}
 
 
 // INPUT
 const input = document.getElementById("searchBox");
 
 
-// SCAN
+// SCAN / ENTER
 input.addEventListener("keydown", function(e){
 
     if(e.key === "Enter"){
@@ -138,15 +199,18 @@ function handleSearch(isScan=false){
     if(!dataLoaded){
 
         document.getElementById("status").innerHTML =
-            "⏳ Đang tải dữ liệu...";
+            "⏳ Dữ liệu chưa load xong";
 
         return;
 
     }
 
     const keyword = String(input.value)
-    .trim()
-    .toLowerCase();
+        .trim()
+        .toLowerCase();
+
+    console.log("KEYWORD:", keyword);
+
     if(!keyword){
 
         return;
@@ -155,16 +219,22 @@ function handleSearch(isScan=false){
 
     const found = data.find(item => item.code === keyword);
 
+    console.log("FOUND:", found);
+
     if(found){
 
-        document.getElementById("status").innerHTML = "✅ Tìm thấy";
+        document.getElementById("status").innerHTML =
+            "✅ Tìm thấy";
 
-        loadPDF(found.url);
+        loadPDF(
+            convertDriveLink(found.url)
+        );
 
     }
     else{
 
-        document.getElementById("status").innerHTML = "❌ Không tìm thấy";
+        document.getElementById("status").innerHTML =
+            "❌ Không tìm thấy";
 
         document.getElementById("pdf-container").innerHTML = "";
 
@@ -185,20 +255,24 @@ function handleSearch(isScan=false){
 // LOAD PDF
 async function loadPDF(url){
 
-    const container = document.getElementById("pdf-container");
+    const container =
+        document.getElementById("pdf-container");
 
-    container.innerHTML = "⏳ Đang tải PDF...";
+    container.innerHTML =
+        "<div class='loading'>⏳ Đang tải PDF...</div>";
 
     try{
 
-        pdfDoc = await pdfjsLib.getDocument(url).promise;
+        pdfDoc =
+            await pdfjsLib.getDocument(url).promise;
 
         renderPages();
 
     }
     catch(err){
 
-        container.innerHTML = "❌ Không mở được PDF";
+        container.innerHTML =
+            "❌ Không mở được PDF";
 
         console.error(err);
 
@@ -207,22 +281,31 @@ async function loadPDF(url){
 }
 
 
-// RENDER
+// RENDER PDF
 async function renderPages(){
 
-    const container = document.getElementById("pdf-container");
+    const container =
+        document.getElementById("pdf-container");
 
     container.innerHTML = "";
 
-    for(let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++){
+    for(
+        let pageNum = 1;
+        pageNum <= pdfDoc.numPages;
+        pageNum++
+    ){
 
-        const page = await pdfDoc.getPage(pageNum);
+        const page =
+            await pdfDoc.getPage(pageNum);
 
-        const viewport = page.getViewport({ scale });
+        const viewport =
+            page.getViewport({ scale });
 
-        const canvas = document.createElement("canvas");
+        const canvas =
+            document.createElement("canvas");
 
-        const ctx = canvas.getContext("2d");
+        const ctx =
+            canvas.getContext("2d");
 
         canvas.height = viewport.height;
 
@@ -275,10 +358,12 @@ function zoomOut(){
 }
 
 
-// FOCUS
+// START
 window.onload = () => {
 
     input.focus();
+
+    loadData();
 
 };
 
