@@ -2,135 +2,260 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Tìm mô tả sản phẩm NTH</title>
+<title>Tìm mã PDF</title>
+
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
-body {
-  font-family: Arial;
-  max-width: 900px;
-  margin: auto;
-  background: #f5f5f5;
+
+body{
+    font-family:Arial;
+    max-width:1000px;
+    margin:auto;
+    background:#f5f5f5;
 }
 
-/* HEADER */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+h2{
+    text-align:center;
 }
 
-.logo {
-  width: 70px;
-  high: 20px;
+input{
+    width:100%;
+    padding:14px;
+    font-size:18px;
+    margin-top:10px;
 }
 
-h2 {
-  margin: 0;
+#status{
+    margin-top:10px;
+    font-weight:bold;
 }
 
-/* INPUT */
-input {
-  width: 100%;
-  padding: 14px;
-  font-size: 18px;
-  margin-top: 15px;
+/* TOOLBAR */
+.toolbar{
+    margin-top:10px;
+    display:flex;
+    gap:10px;
 }
 
-/* STATUS */
-#status {
-  margin-top: 10px;
-  font-weight: bold;
+button{
+    padding:8px 14px;
+    cursor:pointer;
 }
 
 /* PDF */
-iframe {
-  margin-top: 20px;
-  border: 1px solid #ccc;
+#pdf-container{
+    margin-top:15px;
 }
+
+canvas{
+    width:100%;
+    margin-bottom:10px;
+    border:1px solid #ccc;
+    background:white;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- 🔥 HEADER CÓ LOGO -->
-<div class="header">
-  <img src="logo.png" class="logo">
-  <h2> Tìm mô tả sản phẩm</h2>
-</div>
+<h2>🔎 Tìm mã sản phẩm</h2>
 
 <input type="text" id="searchBox" placeholder="Quét hoặc nhập mã...">
 
 <div id="status"></div>
-<div id="result"></div>
+
+<div class="toolbar">
+
+    <button onclick="zoomOut()">➖ Zoom Out</button>
+
+    <button onclick="zoomIn()">➕ Zoom In</button>
+
+</div>
+
+<div id="pdf-container"></div>
 
 <script>
+
 let data = [];
 
-// 🔥 LOAD JSON LOCAL
-fetch("data.json")
-  .then(res => res.json())
-  .then(json => {
-    data = json;
-    console.log("DATA LOADED:", data);
-  });
+let pdfDoc = null;
 
+let scale = 1.2;
+
+
+// LOAD JSON
+fetch("data.json")
+.then(res => res.json())
+.then(json => {
+
+    data = json;
+
+    console.log("DATA LOADED:", data);
+
+});
+
+
+// INPUT
 const input = document.getElementById("searchBox");
 
-// 🔥 CHỈ dùng Enter (scan + gõ tay)
-input.addEventListener("keydown", function(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    handleSearch(true);
-  }
-});
-function convertDriveLink(url) {
-  if (url.includes("drive.google.com")) {
-    const match = url.match(/\/d\/(.*?)\//);
-    if (match && match[1]) {
-      return `https://drive.google.com/file/d/${match[1]}/preview`;
+
+// SCAN
+input.addEventListener("keydown", function(e){
+
+    if(e.key === "Enter"){
+
+        e.preventDefault();
+
+        handleSearch(true);
+
     }
-  }
-  return "https://docs.google.com/gview?url=" + url + "&embedded=true";
+
+});
+
+
+// SEARCH
+function handleSearch(isScan=false){
+
+    const keyword = input.value.trim().toLowerCase();
+
+    if(!keyword){
+
+        return;
+
+    }
+
+    const found = data.find(item => item.code === keyword);
+
+    if(found){
+
+        document.getElementById("status").innerHTML = "✅ Tìm thấy";
+
+        loadPDF(found.url);
+
+    }
+    else{
+
+        document.getElementById("status").innerHTML = "❌ Không tìm thấy";
+
+        document.getElementById("pdf-container").innerHTML = "";
+
+    }
+
+    // AUTO SELECT
+    if(isScan){
+
+        input.focus();
+
+        input.select();
+
+    }
+
 }
-function handleSearch(isScan = false) {
-  const keyword = input.value.trim().toLowerCase();
 
-  if (!keyword) {
-    document.getElementById("result").innerHTML = "";
-    document.getElementById("status").innerHTML = "";
-    return;
-  }
 
-  const found = data.find(item => item.code === keyword);
+// LOAD PDF
+async function loadPDF(url){
 
-  if (found) {
-    document.getElementById("status").innerHTML = "✅ Tìm thấy";
+    const container = document.getElementById("pdf-container");
 
-    document.getElementById("result").innerHTML = `
-  <iframe 
-    src="${convertDriveLink(found.url)}"
-    width="100%" 
-    height="600px">
-  </iframe>
-`;
-  } else {
-    document.getElementById("status").innerHTML = "❌ Không tìm thấy";
-    document.getElementById("result").innerHTML = "";
-  }
+    container.innerHTML = "⏳ Đang tải PDF...";
 
-  // 🔥 tự bôi đen để scan tiếp
-  if (isScan) {
-    input.focus();
-    input.select();
-  }
+    try{
+
+        pdfDoc = await pdfjsLib.getDocument(url).promise;
+
+        renderPages();
+
+    }
+    catch(err){
+
+        container.innerHTML = "❌ Không mở được PDF";
+
+        console.error(err);
+
+    }
+
 }
 
-// focus khi mở trang
+
+// RENDER
+async function renderPages(){
+
+    const container = document.getElementById("pdf-container");
+
+    container.innerHTML = "";
+
+    for(let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++){
+
+        const page = await pdfDoc.getPage(pageNum);
+
+        const viewport = page.getViewport({ scale });
+
+        const canvas = document.createElement("canvas");
+
+        const ctx = canvas.getContext("2d");
+
+        canvas.height = viewport.height;
+
+        canvas.width = viewport.width;
+
+        container.appendChild(canvas);
+
+        await page.render({
+
+            canvasContext: ctx,
+
+            viewport: viewport
+
+        }).promise;
+
+    }
+
+}
+
+
+// ZOOM
+function zoomIn(){
+
+    scale += 0.2;
+
+    if(pdfDoc){
+
+        renderPages();
+
+    }
+
+}
+
+function zoomOut(){
+
+    scale -= 0.2;
+
+    if(scale < 0.6){
+
+        scale = 0.6;
+
+    }
+
+    if(pdfDoc){
+
+        renderPages();
+
+    }
+
+}
+
+
+// FOCUS
 window.onload = () => {
-  input.focus();
+
+    input.focus();
+
 };
+
 </script>
 
 </body>
