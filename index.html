@@ -68,21 +68,12 @@ iframe {
 <script>
 let data = [];
 
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT-ihe2BoE3uU_trCfMHs-4vdTx9UnW_bnHz80vi4__AA_p-xW98E1oBDcOlan7XDFFn0w0WwSsaRhJ/pub?output=csv";
-
-// load dữ liệu
-fetch(sheetURL)
-  .then(res => res.text())
-  .then(csv => {
-    const rows = csv.split("\n").slice(1);
-
-    data = rows.map(row => {
-      const cols = row.split(",");
-      return {
-        code: cols[0]?.replace(/"/g, "").trim().toLowerCase(),
-        url: cols[1]?.replace(/"/g, "").trim()
-      };
-    });
+// 🔥 LOAD JSON LOCAL
+fetch("data.json")
+  .then(res => res.json())
+  .then(json => {
+    data = json;
+    console.log("DATA LOADED:", data);
   });
 
 const input = document.getElementById("searchBox");
