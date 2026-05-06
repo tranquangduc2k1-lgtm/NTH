@@ -13,13 +13,18 @@
 
 <style>
 
-body{
-    font-family:Arial;
-    max-width:1000px;
-    margin:auto;
-    background:#f5f5f5;
-    padding:20px;
-}
+container.innerHTML = `
+    <iframe
+        src="${url}"
+        width="100%"
+        height="calc(100vh - 150px)"
+        style="
+            border:none;
+            background:white;
+            border-radius:10px;
+        ">
+    </iframe>
+`;
 
 h2{
     text-align:center;
@@ -90,13 +95,6 @@ canvas{
 >
 
 <div id="status"></div>
-
-<div class="toolbar">
-
-    <button onclick="zoomOut()">➖ Zoom Out</button>
-
-    <button onclick="zoomIn()">➕ Zoom In</button>
-
 </div>
 
 <div id="pdf-container"></div>
