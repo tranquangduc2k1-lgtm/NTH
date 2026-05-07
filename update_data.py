@@ -3,79 +3,30 @@ import json
 import subprocess
 import os
 
-# ===== FILE PATH =====
-
+# đường dẫn file excel
 excel_file = r"C:\Users\hi\Documents\GitHub\NTH\data.xlsx"
-
-json_file = r"C:\Users\hi\Documents\GitHub\NTH\data.json"
-
-repo_path = r"C:\Users\hi\Documents\GitHub\NTH"
 
 print("🔄 Reading Excel...")
 
-# ===== READ EXCEL =====
-
-df = pd.read_excel(
-    excel_file,
-    usecols=[0, 1],
-    dtype=str
-)
+# chỉ lấy 2 cột đầu tiên
+df = pd.read_excel(excel_file, usecols=[0, 1])
 
 # đổi tên cột
-df.columns = ["code", "value"]
+df.columns = ["code", "url"]
 
-# ===== RESULT =====
+# xóa dòng trống
+df = df.dropna()
 
-result = []
+# xuất json
+json_file = r"C:\Users\hi\Documents\GitHub\NTH\data.json"
 
-# ===== LOOP =====
-
-for _, row in df.iterrows():
-
-    code = str(row["code"]).strip()
-
-    value = str(row["value"]).strip()
-
-    # ===== LINK =====
-    if "http" in value:
-
-        result.append({
-
-            "code": code,
-
-            "name": "",
-
-            "url": value
-
-        })
-
-    # ===== FILE NAME =====
-    else:
-
-        result.append({
-
-            "code": code,
-
-            "name": value,
-
-            "url": ""
-
-        })
-
-# ===== EXPORT JSON =====
-
-with open(json_file, "w", encoding="utf-8") as f:
-
-    json.dump(
-        result,
-        f,
-        ensure_ascii=False,
-        indent=2
-    )
+df.to_json(json_file, orient="records", force_ascii=False)
 
 print("✅ data.json updated!")
 
 # ===== GIT AUTO PUSH =====
+
+repo_path = r"C:\Users\hi\Documents\GitHub\NTH"
 
 os.chdir(repo_path)
 
@@ -83,12 +34,7 @@ subprocess.run(["git", "pull"])
 
 subprocess.run(["git", "add", "."])
 
-subprocess.run([
-    "git",
-    "commit",
-    "-m",
-    "auto update"
-])
+subprocess.run(["git", "commit", "-m", "auto update"])
 
 subprocess.run(["git", "push"])
 
