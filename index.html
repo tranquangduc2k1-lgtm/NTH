@@ -278,9 +278,17 @@ function loadPDF(url){
         document.getElementById("pdf-container");
 
    // ===== IFRAME PDF =====
+    container.style.display = "flex";
+    container.style.justifyContent = "center";
     container.innerHTML = `
         <iframe
-            src="${url}#view=Fit">
+            src="${url}"
+            width="80%"
+            height="500px"
+            style="
+                border:none;
+                background:white;
+            ">
         </iframe>
     `;
 
