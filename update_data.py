@@ -1,15 +1,19 @@
 import pandas as pd
-import json
 import subprocess
 import os
 
-# đường dẫn file excel
+# ===== ĐƯỜNG DẪN FILE EXCEL =====
 excel_file = r"C:\Users\hi\Documents\GitHub\NTH\data.xlsx"
 
 print("🔄 Reading Excel...")
 
+# ===== ĐỌC EXCEL =====
 # chỉ lấy 2 cột đầu tiên
-df = pd.read_excel(excel_file, usecols=[0, 1])
+df = pd.read_excel(
+    excel_file,
+    usecols=[0, 1],
+    dtype=str
+)
 
 # đổi tên cột
 df.columns = ["code", "url"]
@@ -17,25 +21,36 @@ df.columns = ["code", "url"]
 # xóa dòng trống
 df = df.dropna()
 
-# xuất json
+# ===== XUẤT JSON =====
 json_file = r"C:\Users\hi\Documents\GitHub\NTH\data.json"
 
-df.to_json(json_file, orient="records", force_ascii=False)
+df.to_json(
+    json_file,
+    orient="records",
+    force_ascii=False,
+    indent=2
+)
 
 print("✅ data.json updated!")
 
 # ===== GIT AUTO PUSH =====
-
 repo_path = r"C:\Users\hi\Documents\GitHub\NTH"
 
 os.chdir(repo_path)
 
-subprocess.run(["git", "pull"])
+# pull
+subprocess.run(["git", "pull"], check=True)
 
-subprocess.run(["git", "add", "."])
+# add
+subprocess.run(["git", "add", "."], check=True)
 
-subprocess.run(["git", "commit", "-m", "auto update"])
+# commit
+subprocess.run(
+    ["git", "commit", "-m", "auto update"],
+    check=False
+)
 
-subprocess.run(["git", "push"])
+# push
+subprocess.run(["git", "push"], check=True)
 
 print("🚀 GitHub Pages updated!")
