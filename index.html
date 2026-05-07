@@ -172,18 +172,16 @@ async function loadData(){
 }
 
 
+// CONVERT GOOGLE DRIVE LINK
 function convertDriveLink(url){
 
-    // GOOGLE DRIVE
     if(url.includes("drive.google.com")){
 
         const match = url.match(/\/d\/(.*?)\//);
 
         if(match && match[1]){
 
-            const fileId = match[1];
-
-            return `https://drive.google.com/file/d/${fileId}/preview`;
+            return `https://drive.google.com/uc?export=download&id=${match[1]}`;
 
         }
 
@@ -270,26 +268,27 @@ function handleSearch(isScan=false){
 
 }
 
-loadPDF(convertDriveLink(found.url));
+
 function loadPDF(url){
 
     const container =
         document.getElementById("pdf-container");
 
-    container.innerHTML = `
-        <iframe
-            src="${url}"
-            width="100%"
-            height="calc(100vh - 120px)"
-            style="
-                border:none;
-                background:white;
-                border-radius:10px;
-            ">
-        </iframe>
-    `;
+    // ===== GOOGLE DRIVE =====
+    if(url.includes("drive.google.com")){
 
-}
+        const match = url.match(/\/d\/(.*?)\//);
+
+        if(match && match[1]){
+
+            const fileId = match[1];
+
+            url =
+                `https://drive.google.com/file/d/${fileId}/preview`;
+
+        }
+
+    }
 
     // ===== IFRAME PDF =====
     container.innerHTML = `
