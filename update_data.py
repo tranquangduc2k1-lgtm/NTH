@@ -11,8 +11,7 @@ json_file = os.path.join(BASE_DIR, "data.json")
 print("🔄 Reading Excel...")
 
 # ===== READ EXCEL =====
-df = pd.read_excel(excel_file)
-
+df = pd.read_excel(excel_file, usecols=[0,1])
 # ===== COLUMN =====
 df.columns = ["code", "url"]
 
