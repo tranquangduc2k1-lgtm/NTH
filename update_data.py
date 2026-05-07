@@ -35,10 +35,7 @@ result = []
 
 current_pdf = ""
 
-
 # ===== LOOP =====
-
-current_pdf = ""
 
 for _, row in df.iterrows():
 
@@ -46,21 +43,31 @@ for _, row in df.iterrows():
 
     value = str(row["value"]).strip()
 
-    value_lower = value.lower()
-
     # ===== LINK =====
-    if value.startswith("http"):
+    if "http" in value:
 
         result.append({
 
             "code": code,
 
-            "name": current_pdf,
+            "name": "",
 
             "url": value
 
         })
 
+    # ===== FILE NAME =====
+    else:
+
+        result.append({
+
+            "code": code,
+
+            "name": value,
+
+            "url": ""
+
+        })
     # ===== PDF NAME =====
     elif value_lower.endswith(".pdf"):
 
