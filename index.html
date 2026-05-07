@@ -279,18 +279,21 @@ function loadPDF(url){
 
    // ===== IFRAME PDF =====
     container.style.display = "flex";
-    container.style.justifyContent = "center";
-    container.innerHTML = `
-        <iframe
-            src="${url}"
-            width="80%"
-            height="500px"
-            style="
-                border:none;
-                background:white;
-            ">
-        </iframe>
-    `;
+container.style.justifyContent = "center";
+
+container.innerHTML = `
+    <iframe
+        src="${url}#view=FitH"
+        width="98%"
+        height="88vh"
+        style="
+            border:none;
+            background:white;
+            border-radius:15px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.2);
+        ">
+    </iframe>
+`;
 
 }
 // RENDER PDF
