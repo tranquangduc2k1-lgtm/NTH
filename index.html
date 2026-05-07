@@ -277,15 +277,15 @@ function loadPDF(url){
     const container =
         document.getElementById("pdf-container");
 
+   // ===== IFRAME PDF =====
     container.innerHTML = `
         <iframe
             src="${url}"
             width="100%"
-            height="calc(100vh - 120px)"
+            height="700px"
             style="
                 border:none;
                 background:white;
-                border-radius:10px;
             ">
         </iframe>
     `;
