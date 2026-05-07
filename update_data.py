@@ -38,30 +38,22 @@ current_pdf = ""
 
 # ===== LOOP =====
 
+current_pdf = ""
+
 for _, row in df.iterrows():
 
     code = str(row["code"]).strip()
 
     value = str(row["value"]).strip()
 
-    # ===== FILE NAME =====
-    # ví dụ: abc.pdf
-    if (
-        ".pdf" in value.lower()
-        and
-        not value.startswith("http")
-    ):
-
-        current_pdf = value
-
-        print(f"📄 Current PDF: {current_pdf}")
+    value_lower = value.lower()
 
     # ===== LINK =====
-    elif value.startswith("http"):
+    if value.startswith("http"):
 
         result.append({
 
-            "code": code.lower(),
+            "code": code,
 
             "name": current_pdf,
 
@@ -69,6 +61,12 @@ for _, row in df.iterrows():
 
         })
 
+    # ===== PDF NAME =====
+    elif value_lower.endswith(".pdf"):
+
+        current_pdf = value
+
+        print(f"📄 {current_pdf}")
 
 # ===== EXPORT JSON =====
 
