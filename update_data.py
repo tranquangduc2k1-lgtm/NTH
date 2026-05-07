@@ -11,9 +11,7 @@ json_file = r"C:\Users\hi\Documents\GitHub\NTH\data.json"
 
 repo_path = r"C:\Users\hi\Documents\GitHub\NTH"
 
-
 print("🔄 Reading Excel...")
-
 
 # ===== READ EXCEL =====
 
@@ -22,18 +20,13 @@ df = pd.read_excel(
     usecols=[0, 1],
     dtype=str
 )
+
 # đổi tên cột
 df.columns = ["code", "value"]
-
 
 # ===== RESULT =====
 
 result = []
-
-
-# ===== CURRENT PDF NAME =====
-
-current_pdf = ""
 
 # ===== LOOP =====
 
@@ -68,12 +61,6 @@ for _, row in df.iterrows():
             "url": ""
 
         })
-    # ===== PDF NAME =====
-    elif value_lower.endswith(".pdf"):
-
-        current_pdf = value
-
-        print(f"📄 {current_pdf}")
 
 # ===== EXPORT JSON =====
 
@@ -86,9 +73,7 @@ with open(json_file, "w", encoding="utf-8") as f:
         indent=2
     )
 
-
 print("✅ data.json updated!")
-
 
 # ===== GIT AUTO PUSH =====
 
@@ -106,6 +91,5 @@ subprocess.run([
 ])
 
 subprocess.run(["git", "push"])
-
 
 print("🚀 GitHub Pages updated!")
