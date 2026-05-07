@@ -19,9 +19,9 @@ print("🔄 Reading Excel...")
 
 df = pd.read_excel(
     excel_file,
-    usecols=[0, 1]
+    usecols=[0, 1],
+    dtype=str
 )
-
 # đổi tên cột
 df.columns = ["code", "value"]
 
