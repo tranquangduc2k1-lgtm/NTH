@@ -1,66 +1,41 @@
 import pandas as pd
-import os
-
-# ===== PATH =====
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-excel_file = os.path.join(BASE_DIR, "data.xlsx")
-
-json_file = os.path.join(BASE_DIR, "data.json")
-
-print("🔄 Reading Excel...")
-
-# ===== READ EXCEL =====
-df = pd.read_excel(excel_file, usecols=[0,1])
-# ===== COLUMN =====
-df.columns = ["code", "url"]
-
-# ===== CLEAN =====
-df["code"] = (
-    df["code"]
-    .astype(str)
-    .str.strip()
-    .str.lower()
-)
-
-df["url"] = (
-    df["url"]
-    .astype(str)
-    .str.strip()
-)
-
-# ===== REMOVE EMPTY =====
-df = df[df["code"] != ""]
-
-# ===== REMOVE DUPLICATE =====
-df = df.drop_duplicates(subset="code")
-
-# ===== EXPORT JSON =====
-df.to_json(
-    json_file,
-    orient="records",
-    force_ascii=False,
-    indent=2
-)
-
-print("✅ data.json updated!")
-
-input("Press Enter to exit...")
-
+import json
 import subprocess
 import os
 
-# thư mục project github
+# đường dẫn file excel
+excel_file = r"C:\Users\hi\Documents\GitHub\NTH\data.xlsx"
+
+print("🔄 Reading Excel...")
+
+# chỉ lấy 2 cột đầu tiên
+df = pd.read_excel(excel_file, usecols=[0, 1])
+
+# đổi tên cột
+df.columns = ["code", "url"]
+
+# xóa dòng trống
+df = df.dropna()
+
+# xuất json
+json_file = r"C:\Users\hi\Documents\GitHub\NTH\data.json"
+
+df.to_json(json_file, orient="records", force_ascii=False)
+
+print("✅ data.json updated!")
+
+# ===== GIT AUTO PUSH =====
+
 repo_path = r"C:\Users\hi\Documents\GitHub\NTH"
 
-# chuyển vào thư mục
 os.chdir(repo_path)
 
-# git add
+subprocess.run(["git", "pull"])
+
 subprocess.run(["git", "add", "."])
 
-# commit
 subprocess.run(["git", "commit", "-m", "auto update"])
 
-# push
 subprocess.run(["git", "push"])
+
+print("🚀 GitHub Pages updated!")
