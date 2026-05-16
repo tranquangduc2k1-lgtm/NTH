@@ -268,30 +268,48 @@ function handleSearch(isScan=false){
     }
 
 }
-
-
 function loadPDF(url){
 
     const container =
         document.getElementById("pdf-container");
 
-   // ===== IFRAME PDF =====
     container.style.display = "flex";
-container.style.justifyContent = "center";
+    container.style.justifyContent = "center";
 
-container.innerHTML = `
-    <iframe
-         src="${url}#view=FitV"
-        width="98%"
-        height="780px"
-        style="
+    // CHECK IMAGE
+    const isImage =
+        url.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+
+    // ===== IMAGE =====
+    if(isImage){
+
+        container.innerHTML = `
+            <img
+                 src="${url}#view=FitV"
+                 width="98%"
+                 height="760px"
+                class="preview-image"
+            >
+        `;
+
+    }
+
+    // ===== PDF =====
+    else{
+
+        container.innerHTML = `
+            <iframe
+            src="${url}#view=FitV"
+            width="98%"
+            height="760px"
+            style="
             border:none;
             background:white;
-        ">
-    </iframe>
-`;
-
+            </iframe>
+        `;
+    }
 }
+
 // RENDER PDF
 async function renderPages(){
 
