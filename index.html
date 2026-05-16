@@ -100,24 +100,7 @@ canvas{
 }
 
 </style>
-.pdf-wrapper{
-    width:100%;
-    display:flex;
-    justify-content:center;
-    margin-top:15px;
-}
 
-.pdf-frame{
-    width:90%;
-    height:85vh;
-
-    border:none;
-    background:white;
-
-    border-radius:12px;
-
-    object-fit:contain;
-}
 </head>
 
 <body>
@@ -297,12 +280,15 @@ function loadPDF(url){
 container.style.justifyContent = "center";
 
 container.innerHTML = `
-    <div class="pdf-wrapper">
-        <iframe
-            src="${url}#zoom=page-width"
-            class="pdf-frame">
-        </iframe>
-    </div>
+    <iframe
+         src="${url}#view=FitV""
+        width="98%"
+        height="780px"
+        style="
+            border:none;
+            background:white;
+        ">
+    </iframe>
 `;
 
 }
