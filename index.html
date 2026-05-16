@@ -297,16 +297,12 @@ function loadPDF(url){
 container.style.justifyContent = "center";
 
 container.innerHTML = `
- <div class="pdf-wrapper">
-    <iframe
-         src="${url}#view=FitV"
-        width="98%"
-        height="780px"
-        style="
-            border:none;
-            background:white;
-        ">
-    </iframe>
+    <div class="pdf-wrapper">
+        <iframe
+            src="${url}#zoom=page-width"
+            class="pdf-frame">
+        </iframe>
+    </div>
 `;
 
 }
