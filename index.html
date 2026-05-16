@@ -25,7 +25,14 @@ container.innerHTML = `
         ">
     </iframe>
 `;
+.preview-image{
 
+    object-fit:contain;
+
+    border-radius:12px;
+
+    background:white;
+}
 h2{
     text-align:center;
 }
@@ -285,10 +292,8 @@ function loadPDF(url){
 
         container.innerHTML = `
             <img
-                 src="${url}#view=FitV"
-                 width="98%"
-                 height="760px"
-                class="preview-image"
+        src="${url}"
+        class="preview-image"
             >
         `;
 
