@@ -305,17 +305,19 @@ function loadPDF(url){
 
     // ===== PDF =====
     else{
-
         container.innerHTML = `
-            <iframe
-            src="${url}#view=FitV"
-            width="98%"
-            height="760px"
-            style="
+    <iframe
+        src="${url}#view=FitV"
+        width="98%"
+        height="760px"
+        style="
             border:none;
             background:white;
-            </iframe>
-        `;
+            border-radius:10px;
+        ">
+    </iframe>
+`;
+        
     }
 }
 
